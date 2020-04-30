@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>BlazorBarcode</title>
+    <base href="/" />
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/site.css" rel="stylesheet" />
+    <link href="manifest.json" rel="manifest" />
+
+    <STYLE TYPE="text/css" media="screen,print">
+        @font-face {
+            font-family: CCode39;
+            src: url("fonts/ConnectCode39.woff") format('woff')
+        }
+
+        #barcode {
+            font-weight: normal;
+            font-style: normal;
+            line-height: normal;
+            font-family: 'CCode39', sans-serif;
+            text-align: center;
+            font-size: 32px
+        }
+
+        #barcode_text {
+            font-weight: normal;
+            font-style: normal;
+            line-height: normal;
+            font-family: sans-serif;
+            text-align: center;
+            font-size: 24px
+        }
+    </STYLE>
+
+</head>
+
+<body>
+    <app>Loading...</app>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="my_lib.js"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
+
+    <script>navigator.serviceWorker.register('service-worker.js');</script>
+</body>
+
+</html>

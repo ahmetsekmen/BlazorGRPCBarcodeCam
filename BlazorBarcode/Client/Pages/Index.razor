@@ -1,0 +1,124 @@
+﻿@page "/"
+@inject ProductsState productsState
+
+
+@using Net.ConnectCode.Barcode;
+
+<h1>Code 39 Barcode</h1>
+
+<p>Barcode</p>
+<div id="barcode">@barcode</div>
+<div id="barcode_text">@barcode_text</div>
+
+<input type="text" @bind="@_barcodeValue" />
+<button class="btn btn-primary" @onclick="GenerateBarcode">Generate Barcode</button>
+
+
+<br>
+<hr />
+
+
+
+<SearchBox searchText="@BarcodeValue" OnBarcodeDetected="HandleNewBarcode"></SearchBox>
+
+<h4>Blazor BarcodeReader</h4>
+<h6>Value: @_barcodeValue</h6>
+<BarcodeReaderComponent GetValue="((value) => SetValue(value))">
+</BarcodeReaderComponent>
+
+
+
+
+@foreach (var row in productsState.Rows)
+{
+    <ProductRowDisplay Data="row" />
+}
+
+
+<input type="button" @onclick="Degis" />
+
+@code{
+    void Degis()
+    {
+        BarcodeValue = "zxczczxc";
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine("OnAfterRenderAsync");
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private string _barcodeValue = string.Empty;
+    [Parameter]
+    public string BarcodeValue
+    {
+        get { return _barcodeValue; }
+        set
+        {
+            _barcodeValue = value;
+            this.SideEffect();
+        }
+    }
+    public void SideEffect()
+    {
+        Console.WriteLine("has changed");
+        HandleNewBarcode(_barcodeValue);
+    }
+
+
+
+
+
+
+    private void SetValue(string value)
+    {
+        BarcodeValue = value;
+    }
+
+    async Task HandleNewBarcode(string ean)
+    {
+        await productsState.AddItemAsync(ean);
+        Console.WriteLine(productsState.Rows[0].EAN);
+        Console.WriteLine(productsState.Rows[0].Name);
+    }
+
+
+
+
+
+
+    //Generate barcode and Create on database
+
+
+    public string NewProductName { get; set; }
+
+    string barcode = "";
+    string barcode_text = "";
+    void GenerateBarcode()
+    {
+        BarcodeFonts bcf = new BarcodeFonts();
+        bcf.BarcodeType = BarcodeFonts.BarcodeEnum.Code39;
+        bcf.CheckDigit = BarcodeFonts.YesNoEnum.Yes;
+        bcf.Data = Guid.NewGuid().ToString(); // "1234567";
+        bcf.encode();
+        barcode = bcf.EncodedData;
+        barcode_text = bcf.HumanText;
+
+        //Console.WriteLine(bcf.BarcodeType);
+        //Console.WriteLine(bcf.CheckDigit);
+        //Console.WriteLine(bcf.Data);
+        //Console.WriteLine(bcf.EncodedData);
+        //Console.WriteLine(bcf.HumanText);
+
+
+        SaveRecord(bcf.Data);
+    }
+
+    async void SaveRecord(string barcode)
+    {
+
+
+        await productsState.InsertProductAsync(barcode, NewProductName);
+    }
+}
